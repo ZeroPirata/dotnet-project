@@ -1,4 +1,4 @@
-﻿namespace TrainingRestFullApi.src.DTOs
+﻿namespace TrainingRestFullApi.src.Configuration
 {
     public class ServiceResponse
     {

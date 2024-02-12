@@ -5,19 +5,20 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
-using TrainingRestFullApi.src.Interfaces;
-using TrainingRestFullApi.src.Service;
+using TrainingRestFullApi.src.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConsole();
-// DotEnv Config
-DotNetEnv.Env.Load();
+// Service Eject
+Scoped service = new();
+service.AddScopedService(builder.Services);
 
 // DataBase Connection
-Configuration config = new();
+Configuration config = new(builder.Configuration);
 string databaseSettings = config.PostGresConnection();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(databaseSettings));
+
 
 // JWT
 builder.Services.AddAuthentication( auth =>
@@ -28,9 +29,9 @@ builder.Services.AddAuthentication( auth =>
 }
 ).AddJwtBearer(x =>
 {
-    string? secretKey = Environment.GetEnvironmentVariable("JWTScreteKey");
-    string? issuer = Environment.GetEnvironmentVariable("Issuer");
-    string? audience = Environment.GetEnvironmentVariable("Audience");
+    string? secretKey = builder.Configuration["Jwt:SecretKey"];
+    string? issuer = builder.Configuration["Jwt:Issuer"];
+    string? audience = builder.Configuration["Jwt:Audience"];
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidIssuer = issuer,
@@ -43,7 +44,6 @@ builder.Services.AddAuthentication( auth =>
     };
 });
 
-// Auth for OpenAi
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -55,22 +55,22 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IUserAccount, UserService>();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
 }
-
+app.UseMiddleware<JwtMiddleWare>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

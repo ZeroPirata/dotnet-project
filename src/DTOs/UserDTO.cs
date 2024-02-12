@@ -21,8 +21,11 @@ namespace TrainingRestFullApi.src.DTOs
         [DataType(DataType.Password)]
         [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; } = string.Empty;
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
-
+        public DateTime CreatedAt { get; set; }
+        public UserDTO()
+        {
+            CreatedAt = DateTime.Now;
+        }
     }
 
 }

@@ -1,5 +1,5 @@
 ﻿using TrainingRestFullApi.src.DTOs;
-using static TrainingRestFullApi.src.DTOs.ServiceResponse;
+using static TrainingRestFullApi.src.Configuration.ServiceResponse;
 
 namespace TrainingRestFullApi.src.Interfaces
 {

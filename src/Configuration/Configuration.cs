@@ -4,17 +4,22 @@ namespace TrainingRestFullApi.src.Configuration
 {
     public class Configuration
     {
-        private readonly ILogger? _logger;
+        private readonly IConfiguration _configuration;
+
+        public Configuration(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public string PostGresConnection()
         {
             try
             {
-                string? port = Environment.GetEnvironmentVariable("POSTGRES_PORT");
-                string? host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
-                string? user = Environment.GetEnvironmentVariable("POSTGRES_USER");
-                string? password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
-                string? database = Environment.GetEnvironmentVariable("POSTGRES_DATABASE");
+                string? port = _configuration["PostgreSQL:PORT"];
+                string? host = _configuration["PostgreSQL:HOST"];
+                string? user = _configuration["PostgreSQL:USER"];
+                string? password = _configuration["PostgreSQL:PASSWORD"];
+                string? database = _configuration["PostgreSQL:DATABASE"];
 
                 if (string.IsNullOrEmpty(port) || string.IsNullOrEmpty(host) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(database))
                 {
@@ -26,7 +31,7 @@ namespace TrainingRestFullApi.src.Configuration
             }
             catch (Exception ex)
             {
-                _logger?.LogError($"Erro ao gerar configuração do PostgreSQL: {ex.Message}", ex);
+                Console.WriteLine($"Erro ao gerar configuração do PostgreSQL: {ex.Message}", ex);
                 throw;
             }
         }

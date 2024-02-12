@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using TrainingRestFullApi.src.Middleware;
 namespace TrainingRestFullApi.src.Controllers
 {
     [Route("v1/api")]
@@ -23,7 +22,8 @@ namespace TrainingRestFullApi.src.Controllers
         {
             var apiControllSection = _config.GetSection("ApiControll");
             string? version = apiControllSection["version"];
-            string? date    = apiControllSection["date"];
+            string? date = apiControllSection["date"];
+
             dynamic response = new { Version = version, Date = date };
             return Ok(response);
         }
