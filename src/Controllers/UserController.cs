@@ -7,7 +7,7 @@ namespace TrainingRestFullApi.src.Controllers
 {
     [Route("v1/user")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly IUserAccount _userAccountService;
 
@@ -24,7 +24,7 @@ namespace TrainingRestFullApi.src.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromForm] LoginDTO loginDTO)
         {
             var response = await _userAccountService.LoginAccount(loginDTO);
             return StatusCode(response.Flag, new { Token = response.Token ?? "", Message = response.Message! });

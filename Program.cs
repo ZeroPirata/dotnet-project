@@ -7,53 +7,19 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using TrainingRestFullApi.src.Middleware;
 
+Scoped service = new();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConsole();
 // Service Eject
-Scoped service = new();
 service.AddScopedService(builder.Services);
+// JWT
+service.AddAuthenticationJwt(builder.Services, builder.Configuration);
 
 // DataBase Connection
 Configuration config = new(builder.Configuration);
 string databaseSettings = config.PostGresConnection();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(databaseSettings));
-
-
-// JWT
-builder.Services.AddAuthentication( auth =>
-{
-    auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}
-).AddJwtBearer(x =>
-{
-    string? secretKey = builder.Configuration["Jwt:SecretKey"];
-    string? issuer = builder.Configuration["Jwt:Issuer"];
-    string? audience = builder.Configuration["Jwt:Audience"];
-    x.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = issuer,
-        ValidAudience = audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
-    };
-});
-
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-});
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

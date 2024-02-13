@@ -8,5 +8,7 @@ namespace TrainingRestFullApi.src.Context
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Session> Sessions { get; set; }
+        public DbSet<Movie> Movies { get; set; }   
+        public DbSet<Review> Reviews { get; set; }
     }
 }
