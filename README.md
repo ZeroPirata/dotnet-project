@@ -8,7 +8,7 @@ Embora reconheça que há espaço para melhorias e ajustes, sinto-me satisfeito 
 
 ### O que eu gostei de fazer
 Sinceramente, todo o projeto em si foi algo desafiador por estar fazendo totalmente do inicio essa aplicação, mas o que eu mais gostei de fazer com toda a certeza foi a authenticação utilizando `JWT` e o `CustomHandler` que foi foi totalmente do zero sem utilizar o `IdentityUser` do dotnet, foi algo totalmente prazerosso de ver funcionando, e vendo na pratica ainda.
-### O que eu não goste
+### O que eu não gostei
 Logicamente que enfrentei alguns desafios durante o desenvolvimento do projeto. Um deles foi compreender a importância de colocar todas as coisas dentro do escopo (`Scoped`). Levei um tempo para perceber que isso era obrigatório e, consequentemente, perdi algumas horas nesse processo de aprendizado.
 
 Além disso, outro obstáculo foi minha tentativa inicial de executar uma query que acabou não funcionando. Isso foi bastante frustrante para mim. No entanto, não desisti e acabei encontrando uma solução usando o próprio `Entity Framework`. No final das contas, essa situação se transformou em uma situação de ganha-ganha.
