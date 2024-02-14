@@ -5,17 +5,11 @@ namespace TrainingRestFullApi.src.Controllers
 {
     [Route("v1/api")]
     [ApiController]
-    public class ApiController : ControllerBase
+    public class ApiController(IConfiguration config, ApplicationDbContext context) : ControllerBase
     {
 
-        private readonly IConfiguration _config;
-        private readonly ApplicationDbContext _context;
-
-        public ApiController(IConfiguration config, ApplicationDbContext context)
-        {
-            _config = config;
-            _context = context;
-        }
+        private readonly IConfiguration _config = config;
+        private readonly ApplicationDbContext _context = context;
 
         [HttpGet("version")]
         public IActionResult Version()

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrainingRestFullApi.src.DTOs.Movie;
 using TrainingRestFullApi.src.Interfaces;
@@ -7,17 +7,12 @@ namespace TrainingRestFullApi.src.Controllers
 {
     [Route("api/movie")]
     [ApiController]
-    public class MovieController : ControllerBase
+    public class MovieController(IMovie movieController) : ControllerBase
     {
 
-        private readonly IMovie _movieController;
+        private readonly IMovie _movieController = movieController;
 
-        public MovieController(IMovie movieController)
-        {
-            _movieController = movieController;
-        }
-
-        [HttpGet("/{guid}")]
+        [HttpGet("{guid}")]
         public async Task<IActionResult> ReadOne(Guid guid)
         {
             try
@@ -48,7 +43,7 @@ namespace TrainingRestFullApi.src.Controllers
         }
 
         [HttpGet("get-by-crew")]
-        public async Task<IActionResult> GetByCrew(string crew = "producer", string crewName = "Stacey Sher")
+        public async Task<IActionResult> GetByCrew(string crew , string crewName)
         {
             try
             {
@@ -62,7 +57,8 @@ namespace TrainingRestFullApi.src.Controllers
             }
         }
 
-        [HttpPost("/")]
+        [HttpPost("create")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> Create(MCreateDTO createDto)
         {
             try
@@ -76,8 +72,39 @@ namespace TrainingRestFullApi.src.Controllers
                 throw;
             }
         }
+        [HttpPut("{guid}/update")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> Update(Guid guid, MUpdateDTO updateDTO)
+        {
+            try
+            {
+                var response = await _movieController.Update(guid, updateDTO);
+                return StatusCode(response.Flag, response.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error to update a movie: {ex.Message}");
+                throw;
+            }
+        }
+        [HttpPut("{guid}/crew-update")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> UpdateCrew(Guid guid, MUpdateCrewDTO crewDTO)
+        {
+            try
+            {
+                var response = await _movieController.UpdateCrew(guid, crewDTO);
+                return StatusCode(response.Flag, response.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.Out.WriteLine($"Error to update crew in movie: {ex.Message}");
+                throw;
+            }
+        }
 
-        [HttpDelete("/{guid}")]
+        [HttpDelete("{guid}/delete")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> Delete(Guid guid)
         {
             try

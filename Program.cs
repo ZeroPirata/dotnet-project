@@ -20,7 +20,6 @@ service.AddAuthenticationJwt(builder.Services, builder.Configuration);
 Configuration config = new(builder.Configuration);
 string databaseSettings = config.PostGresConnection();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(databaseSettings));
-
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

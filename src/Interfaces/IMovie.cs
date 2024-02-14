@@ -7,7 +7,8 @@ namespace TrainingRestFullApi.src.Interfaces
     public interface IMovie
     {
         Task<GeneralResponse> Create(MCreateDTO creaetDto);
-        Task<CreatedAtActionResult> Update(Guid id);
+        Task<GeneralResponse> Update(Guid id, MUpdateDTO updateDTO);
+        Task<GeneralResponse> UpdateCrew(Guid id, MUpdateCrewDTO crewDTO);
         Task<DynamicResponse> ReadOne(Guid id);
         Task<DynamicResponse> ReadMany();
         Task<GeneralResponse> Delete(Guid id);

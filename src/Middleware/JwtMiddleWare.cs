@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿    using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -27,7 +27,6 @@ namespace TrainingRestFullApi.src.Middleware
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.GivenName, user.NickName!),
                 new Claim(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()!)
             };
 
             Session session = new()
@@ -56,12 +55,37 @@ namespace TrainingRestFullApi.src.Middleware
                 if (principal != null)
                 {
                     var jti = principal.FindFirstValue(JwtRegisteredClaimNames.Jti);
-                    context.Items["Jti"] = jti;
-                    Console.WriteLine(jti);
+                    var sub = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+                    if (!string.IsNullOrEmpty(jti) && !string.IsNullOrEmpty(sub))
+                    {
+                        var userRoles = await GetUserRolesAsync(Guid.Parse(sub));
+                        context.Items["Jti"] = jti;
+                        context.Items["Sub"] = sub;
+                        context.Items["Roles"] = userRoles;
+                    }
                 }
             }
             await next(context);
         }
+
+        private async Task<List<string>> GetUserRolesAsync(Guid userId)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user != null)
+            {
+                var userRoles = await _context.UserRoles
+                    .Where(ur => ur.UserId == userId)
+                    .Select(ur => ur.Role.Name)
+                    .ToListAsync();
+
+                return userRoles;
+            }
+
+            return new List<string>();
+        }
+
 
         private ClaimsPrincipal ValidateTokenAndGetClaims(string jwtToken)
         {

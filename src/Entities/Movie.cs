@@ -26,6 +26,7 @@ namespace TrainingRestFullApi.src.Entities
        
         public List<Review>? Reviews { get; set; }
 
+        public List<UserLikedMovie>? UserLiked { get; set; }
 
         [NotMapped]
         public decimal? Total {  get; set; }
@@ -54,10 +55,20 @@ namespace TrainingRestFullApi.src.Entities
             Crew = JsonConvert.SerializeObject(crewDictionary);
         }
 
+        public void UpdateScore(string score, string oldScore, string movieScore)
+        {
+            var scoreDictionary = JsonConvert.DeserializeObject<Dictionary<string, int>>(Ratings ?? movieScore);
+            scoreDictionary![score] += 1;
+            scoreDictionary![oldScore] -= 1;
+            Ratings = JsonConvert.SerializeObject(scoreDictionary);
+        }
+
         public async Task<Movie?> GetMovieByGuid(ApplicationDbContext dbMovie, Guid id)
         {
             var query = await dbMovie.Movies
                 .Where(b => b.Id == id)
+                .Include(m => m.Reviews)!
+                    .ThenInclude(r => r.User)
                 .Select(t => new Movie
                 {
                     Id = t.Id,
@@ -67,8 +78,10 @@ namespace TrainingRestFullApi.src.Entities
                     Genere = t.Genere,
                     Ratings = t.Ratings,
                     Title = t.Title,
+                    Reviews = t.Reviews,
                     Total = t.CalcularTotal(t)
-                }).FirstOrDefaultAsync();
+                })
+                .FirstOrDefaultAsync();
             return query;
         }
 
@@ -87,6 +100,12 @@ namespace TrainingRestFullApi.src.Entities
             })
             .ToListAsync();
             return query;
+        }
+
+        public void UpdateRatingMovie(string rating)
+        {
+            bool rule = int.TryParse(rating, out int number) && number >= 1 && number <= 5;
+            
         }
 
         private decimal CalcularTotal(Movie t) => Convert.ToDecimal(JsonConvert.DeserializeObject<Dictionary<string, object>>(t.Ratings!)!["1"]) +

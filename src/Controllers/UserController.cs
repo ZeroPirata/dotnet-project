@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrainingRestFullApi.src.DTOs;
+using TrainingRestFullApi.src.DTOs.User;
 using TrainingRestFullApi.src.Interfaces;
 using TrainingRestFullApi.src.Service;
 
@@ -7,14 +8,9 @@ namespace TrainingRestFullApi.src.Controllers
 {
     [Route("v1/user")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(IUserAccount userAccountService) : ControllerBase
     {
-        private readonly IUserAccount _userAccountService;
-
-        public UserController(IUserAccount userAccountService)
-        {
-            _userAccountService = userAccountService;
-        }
+        private readonly IUserAccount _userAccountService = userAccountService;
 
         [HttpPost("create-account")]
         public async Task<IActionResult> CreateAccount(UserDTO userDTO)

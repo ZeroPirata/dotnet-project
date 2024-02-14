@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace TrainingRestFullApi.src.DTOs
+namespace TrainingRestFullApi.src.DTOs.User
 {
     public class UserDTO
     {
@@ -21,11 +21,6 @@ namespace TrainingRestFullApi.src.DTOs
         [DataType(DataType.Password)]
         [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public UserDTO()
-        {
-            CreatedAt = DateTime.Now;
-        }
     }
 
 }

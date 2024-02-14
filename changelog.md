@@ -1,4 +1,27 @@
-#### [02-12-2024
+#### [02-13-2024]
+- Desenvolvimento de três novas entidades:
+    - `UserLikedMovie`: Responsável por armazenar o critério do usuário em relação a um filme.
+    - `Role`: Gerenciamento de privilégios dentro do sistema.
+    - `UserRole`: Tabela de ligação entre `Role` e `Usuário`.
+- Criação de rotas finais para `Movie`:
+    - `Atualizar informações básicas`: Permite a atualização das informações básicas do filme.
+    - `Atualizar Equipe`: Permite a atualização dos integrantes da equipe do filme com base em um formato JSON.
+- Criação de rotas para `Review`:
+    - `Criar`: Permite que o usuário adicione um comentário para um filme específico.
+    - `Atualizar`: Permite a atualização do comentário em um filme específico.
+    - `Deletar`: Permite a exclusão de um comentário.
+- Criação de rotas para `Rating`:
+    - `Curtir`: Permite que o usuário curta um filme.
+    - `Avaliar`: Permite que o usuário dê uma nota de 1 a 5 para o filme.
+    - `Avaliação`: Indica se o usuário avaliou positivamente o filme (`True`) ou não (`False`).
+- Adição de um `Handler` para verificar a `role` do usuário logado no sistema.
+- Alteração do `JWT` para buscar as `roles` do usuário com base no seu `Sub`.
+- Criação de políticas (`Policy`) para `Usuário` e `Administrador`.
+- Geração automática das `roles` mencionadas acima na primeira execução do banco de dados.
+- Criação de DTOs para `Rating` e `Review`.
+- Adição do pacote `AutoMapper` para facilitar a execução do `Update`.
+
+#### [02-12-2024]
 - Desenvolvimento de duas novas Entidades:
     - `Movie`: Tabela para armazenar informações sobre os filmes dentro do sistema.
     - `Review`: Tabela para armazenar as avaliações dos usuários em relação aos filmes.
